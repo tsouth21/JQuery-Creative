@@ -1,5 +1,44 @@
 <html>
+<head>
+<title>Ron Swanson Quotes</title>
+<script
+  src="http://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous">
+</script>
 
 
+</head>
+<body>
+<button id="get-quote">Get a new quote</button>
+<p id="quote">Getting quote...</p>
+</body>
+<script>
+'use strict';
 
+const quoteButton = document.body.querySelector('#get-quote');
+const quoteOutput = document.body.querySelector('#quote');
+
+function* quoteGenerator() {
+while (true) {
+yield fetch('http://ron-swanson-quotes.herokuapp.com/v2/quotes')
+    .then(res => res.json());
+ }
+}
+
+const generator = quoteGenerator();
+
+function updateQuote() {
+quoteButton.disabled = true;
+
+generator.next().value.then(function (data) {
+quoteOutput.innerHTML = `"${data[0]}"`;
+quoteButton.disabled = false;
+});
+}
+
+quoteButton.onclick = updateQuote;
+
+updateQuote();
+</script>
 </html>
